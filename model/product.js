@@ -1,12 +1,20 @@
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
-
-MongoClient.connect(url , function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("ethernt-store");
-  dbo.collection("category").findOne({}, function(err, res) {
-    if (err) throw err;
-    console.log(res);
-    db.close();
+var MongoClient = require('../db')
+var {ObjectId} = require('mongodb')
+exports.addProduct = function (product,cb) {
+  MongoClient.dbo.collection("product").insertOne(product,function (err,doc) {
+    if(err) {
+      throw err
+      cb(err)
+    };
   });
-});
+}
+exports.findProduct = function (id, cb) {
+  MongoClient.dbo.collection("product").findOne({_id: new ObjectId(id)},function (err,doc) {
+    cb(err,doc)
+  })
+}
+exports.findCatalog = function (id, cb) {
+  MongoClient.dbo.collection("product").find({category: id}).toArray(function (err,doc) {
+    cb(err,doc)
+  })
+}
