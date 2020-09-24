@@ -1,6 +1,7 @@
 var MongoClient = require('../db')
 var {ObjectId} = require('mongodb')
 exports.addProduct = function (product,cb) {
+  product.dateAdd = Date.now()
   MongoClient.dbo.collection("product").insertOne(product,function (err,doc) {
     if(err) {
       throw err
