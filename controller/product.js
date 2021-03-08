@@ -50,43 +50,43 @@ function validation(product) {
   }
 }
 exports.addProduct = function (req, res) {
-  // res.json(req.body.product)
-  // let product = JSON.parse(req.body.product)
-  // let img =  req.files.map(function (item,i) {
-  //     return item.filename
-  //   })
-  //   product.img = img
-  //   try {
-  //     validation(product)
-  //   } catch (e) {
-  //     req.files.map(function (item) {
-  //       Fs.unlink(item.path, (err) => {
-  //         if (err) console.log(err); // если возникла ошибка
-  //         else console.log(item.filename);
-  //       });
-  //       console.log(item);
-  //     })
-  //   }
-  //     ModelProduct.addProduct(product, function (err) {
-  //       if (err){
-  //         req.files.map(function (item) {
-  //           Fs.unlink(item.path, (err) => {
-  //             if (err) console.log(err); // если возникла ошибка
-  //             else console.log(item.filename);
-  //           });
-  //           // console.log(item);
-  //         })
-  //         res.json(err)
-  //         throw err
-  //       }
+  res.json(req.body.product)
+  let product = JSON.parse(req.body.product)
+  let img =  req.files.map(function (item,i) {
+      return item.filename
+    })
+    product.img = img
+    try {
+      validation(product)
+    } catch (e) {
+      req.files.map(function (item) {
+        Fs.unlink(item.path, (err) => {
+          if (err) console.log(err); // если возникла ошибка
+          else console.log(item.filename);
+        });
+        console.log(item);
+      })
+    }
+      ModelProduct.addProduct(product, function (err) {
+        if (err){
+          req.files.map(function (item) {
+            Fs.unlink(item.path, (err) => {
+              if (err) console.log(err); // если возникла ошибка
+              else console.log(item.filename);
+            });
+            // console.log(item);
+          })
+          res.json(err)
+          throw err
+        }
         res.json({err:null})
-  //     })
-      // ModelCategory.findSpecifications(product.category, function (err,category) {
-      //   if(err) throw err
-      //   ModelCategory.updateDefultValue(product.category,prefetchDataForUpdateDefultValue(category,product),function (err) {
-      //     if(err) throw err
-      //   })
-      // })
+      })
+      ModelCategory.findSpecifications(product.category, function (err,category) {
+        if(err) throw err
+        ModelCategory.updateDefultValue(product.category,prefetchDataForUpdateDefultValue(category,product),function (err) {
+          if(err) throw err
+        })
+      })
 }
 exports.getProduct = function (req,res) {
   let id = req.body.id
@@ -100,10 +100,11 @@ exports.getProduct = function (req,res) {
 exports.getCatalog = function (req,res) {
   let idCategory = req.body.id
   ModelProduct.findCatalog(idCategory, function (err,catalog) {
-    console.log(catalog);
-    if(err){
-      res.json(err)
-    }
-    res.json(catalog)
+    ModelCategory.findSpecifications(idCategory,function (err, filter) {
+      if (err) {
+        res.json(err)
+      }
+      res.json({catalog: catalog, filter: filter})
+    })
   })
 }

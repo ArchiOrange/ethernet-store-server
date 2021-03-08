@@ -19,3 +19,8 @@ exports.findCatalog = function (id, cb) {
     cb(err,doc)
   })
 }
+exports.findProductByParameters = function (filter, cb) {
+  MongoClient.dbo.collection("product").find(filter).toArray(function (err,docs) {
+    cb(err,docs)
+  })
+}
